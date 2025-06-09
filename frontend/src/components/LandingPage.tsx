@@ -18,6 +18,8 @@ import {
   FileSearch
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import LoginProfileButton from './LoginProfileButton';
+
 
 const features = [
   { icon: <Zap className="text-warning" />, title: "Instant Analysis", desc: "Get immediate insights from your study materials." },
@@ -92,7 +94,7 @@ export default function LandingPage() {
           </p>
           <div className="d-flex justify-content-center gap-3 mt-4">
           <button className="btn-grad-blue fw-bold pe-4 ps-4" style={{ zIndex: 1100, minWidth: '80px', borderRadius:'45px', height:'54px', fontSize:'16px' }}  onClick={() => navigate(`/home`)}>Get Started Free</button>
-          <button className="btn-grad-orange fw-bold pe-4 ps-4" style={{ zIndex: 1100, minWidth: '80px', borderRadius:'45px', height:'54px', fontSize:'16px' }} >Explore Features</button>
+          <LoginProfileButton />
         </div>
         </header>
       </div>

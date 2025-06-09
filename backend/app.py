@@ -2,33 +2,112 @@ import re
 import os
 import io
 import tempfile
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 import fitz 
+import firebase_admin
+from firebase_admin import credentials, auth as firebase_auth
 from dotenv import load_dotenv
 from flask_cors import CORS
 from docx import Document
 from docxcompose.composer import Composer
 from docxtpl import DocxTemplate
-from mcq_generator import generateMCQ
+from authDecorator import firebase_required
+from mcq_generator import generateMCQ 
+from datetime import datetime
 from narrative_generator import generateOpenEnded
 from summarizing import summarize_topic
+from werkzeug.utils import secure_filename
 from eassy_generator import generate_essay_or_paragraph
 from coverpage_generator import generate_coverpage
 from assignment_generator import assignment_gen, markdown_to_plain_text
 from study_plan import generate_study_plan
 from topic_explanation import explain_topic
 from paraphrasing import paraphrase_text
+from pymongo import MongoClient
+
 
 load_dotenv()
-
 app = Flask(__name__)
-CORS(app) 
+CORS(app, supports_credentials=True, origins=[
+    "http://localhost:5173", 
+    "http://127.0.0.1:5173"
+], methods=["GET", "POST", "OPTIONS"])
+
+mongo_uri = os.getenv("MONGO_URI")
+
+client = MongoClient(mongo_uri)
+db = client["studyhelper"]
+users_collection = db["users"]
+
+cred = credentials.Certificate("firebase-service-account.json")
+firebase_admin.initialize_app(cred)
 
 def extractText(pdf_path):
     """Extract full text from a given PDF file."""
     doc = fitz.open(pdf_path)
     text = "\n".join([page.get_text("text") for page in doc])
     return text.strip()
+
+@app.route("/api/register-user", methods=["POST"])
+def register_user():
+    data = request.get_json()
+
+    uid = data.get("uid")
+    email = data.get("email")
+
+    if not uid or not email:
+        return jsonify({"error": "Missing uid or email"}), 400
+
+    # Check if user already exists
+    existing_user = users_collection.find_one({"uid": uid})
+    if existing_user:
+        return jsonify({"message": "User already exists"}), 200
+
+    # Insert user
+    users_collection.insert_one({
+        "uid": uid,
+        "email": email,
+        "createdAt": datetime.utcnow()
+    })
+
+    return jsonify({"message": "User registered successfully"}), 201
+
+def verify_token(request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return None
+    token = auth_header.split("Bearer ")[1]
+    print("Authorization Header:", request.headers.get("Authorization"))
+    try:
+        decoded_token = firebase_auth.verify_id_token(token)
+        return decoded_token["uid"]
+    except Exception as e:
+        print("Invalid token", e)
+        return None
+
+@app.route("/api/user", methods=["GET", "POST", "OPTIONS"])
+def user_route():
+    if request.method == "OPTIONS":
+        return '', 200
+
+    uid = verify_token(request)
+    if not uid:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if request.method == "GET":
+        user = users_collection.find_one({"uid": uid}, {"_id": 0})
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+        return jsonify(user), 200
+
+    elif request.method == "POST":
+        data = request.get_json()
+        name = data.get("name", "").strip()
+        university = data.get("university", "").strip()
+        user_data = {"name": name, "university": university}
+        users_collection.update_one({"uid": uid}, {"$set": user_data}, upsert=True)
+        return jsonify({"message": "Profile updated"}), 200
+
 
 @app.route("/extract-text", methods=["POST"])
 def extract_text_endpoint():

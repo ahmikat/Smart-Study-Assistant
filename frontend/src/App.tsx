@@ -15,14 +15,19 @@ import Aboutme from "./components/About-me/Aboutme";
 import ContactMe from "./components/About-me/ContactMe";
 import ParaphrasingTool from "./components/Paraphrasing";
 import LandingPage from "./components/LandingPage";
-
+import AuthForm from "./components/AuthForm";
+import { AuthProvider } from "./components/AuthContext";
+import Profile from "./components/Profile";
+import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   return (
     <Router>
+      <AuthProvider>
       <ThemeProvider>
         <MainApp />
       </ThemeProvider>
+      </AuthProvider>
     </Router>
   );
 };
@@ -38,17 +43,21 @@ const MainApp = () => {
       >
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/home" element={<HomePage/>}/>
-          <Route path="/pdfToqa" element={<QuestionGenerator />} />
-          <Route path="/lab-report-generator" element={<LabReportGenerator />}/>
-          <Route path="/pdf-summary" element={ <PDFSummary/> }/>
-          <Route path="/eassy-generator" element={ <EssayGenerator/> }/>
-          <Route path="/topic-explaination" element={ <TopicExplanation/> }/>
-          <Route path="/paraphrase" element={ <ParaphrasingTool/> }/>
-          <Route path="/study-plan-generator" element={ <StudyPlan/> }/>
-          <Route path="/about-me" element={ <Aboutme/> }/>
-          <Route path="/contact" element={ <ContactMe/> }/>
-          <Route path="/submit" element={ <Test/> }/>
+          <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
+          <Route path="/pdfToqa" element={<PrivateRoute><QuestionGenerator /></PrivateRoute>} />
+          <Route path="/lab-report-generator" element={<PrivateRoute><LabReportGenerator /></PrivateRoute>} />
+          <Route path="/pdf-summary" element={<PrivateRoute><PDFSummary /></PrivateRoute>} />
+          <Route path="/eassy-generator" element={<PrivateRoute><EssayGenerator /></PrivateRoute>} />
+          <Route path="/topic-explaination" element={<PrivateRoute><TopicExplanation /></PrivateRoute>} />
+          <Route path="/paraphrase" element={<PrivateRoute><ParaphrasingTool /></PrivateRoute>} />
+          <Route path="/study-plan-generator" element={<PrivateRoute><StudyPlan /></PrivateRoute>} />
+          <Route path="/about-me" element={<PrivateRoute><Aboutme /></PrivateRoute>} />
+          <Route path="/contact" element={<PrivateRoute><ContactMe /></PrivateRoute>} />
+          <Route path="/submit" element={<PrivateRoute><Test /></PrivateRoute>} />
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+
+{/* Public route */}
+<Route path="/firebaseAuth" element={<AuthForm />} />
         </Routes>
       </main>
     </div>

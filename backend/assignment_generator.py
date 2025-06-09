@@ -12,7 +12,7 @@ def assignment_gen(text):
         2. Introduction (150-200 words): Explain the background and theory behind "{text}" in simple and clear terms. Provide enough context so that even a beginner can understand its importance.
         3. Procedure / Code (C++ if coding-related and for assembly code use assembly language):
             If the topic is related to an experiment, describe the step-by-step procedure in a clear and structured way.
-            If the topic involves coding, provide a well-optimized C++ implementation that follows best practices.
+            If the topic involves coding, provide a well-optimized C++ implementation[exclude comments in code].
         4. Results: Show the output from the experiment or the execution of the code, ensuring clarity and correctness.
         5. Analysis & Discussion: Explain the meaning of the results, compare them with expected outcomes, and discuss any interesting observations.
         6. Conclusion (150-200 words): Summarize the key findings, lessons learned from "{text}".
