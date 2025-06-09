@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import axios from "axios";
-import { auth } from "../firebase"; // Ensure firebase.ts exports `auth`
+import { auth } from "../firebase"
 import { useNavigate } from "react-router-dom";
 
 const AuthForm: React.FC = () => {
