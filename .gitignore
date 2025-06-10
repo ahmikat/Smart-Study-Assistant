@@ -2,7 +2,7 @@
 .env
 backend/.env
 frontend/.env
-frontend/src/firebase.ts
+frontend/src/components/firebase.ts
 
 # Ignore dependency folders
 backend/__pycache__/
