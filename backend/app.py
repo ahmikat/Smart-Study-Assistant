@@ -29,6 +29,7 @@ from pymongo import MongoClient
 load_dotenv()
 app = Flask(__name__)
 CORS(app, origins=[
+    "https://smart-study-assistant.vercel.app",
     "http://localhost:5173", 
     "http://127.0.0.1:5000"
 ], supports_credentials=True, methods=["GET", "POST", "OPTIONS"], allow_headers=["Authorization", "Content-Type"])
