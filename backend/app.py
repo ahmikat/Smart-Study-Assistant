@@ -28,10 +28,10 @@ from pymongo import MongoClient
 
 load_dotenv()
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=[
+CORS(app, origins=[
     "http://localhost:5173", 
-    "http://127.0.0.1:5173"
-], methods=["GET", "POST", "OPTIONS"])
+    "http://127.0.0.1:5000"
+], supports_credentials=True, methods=["GET", "POST", "OPTIONS"], allow_headers=["Authorization", "Content-Type"])
 
 mongo_uri = os.getenv("MONGO_URI")
 
@@ -77,7 +77,7 @@ def verify_token(request):
     if not auth_header:
         return None
     token = auth_header.split("Bearer ")[1]
-    print("Authorization Header:", request.headers.get("Authorization"))
+    #print("Authorization Header:", request.headers.get("Authorization"))
     try:
         decoded_token = firebase_auth.verify_id_token(token)
         return decoded_token["uid"]
@@ -108,6 +108,46 @@ def user_route():
         users_collection.update_one({"uid": uid}, {"$set": user_data}, upsert=True)
         return jsonify({"message": "Profile updated"}), 200
 
+@app.route("/api/user/texts", methods=["POST", "OPTIONS"])
+def add_user_text():
+    if request.method == "OPTIONS":
+        return "", 200  # For CORS preflight
+    print(">>> Headers:", dict(request.headers))
+    print(">>> Raw body:", request.data)
+    print(">>> Parsed JSON:", request.get_json(silent=True))
+
+    # ✅ 1. Verify Firebase token and extract UID
+    uid = verify_token(request)
+    if not uid:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # ✅ 2. Parse and validate incoming JSON
+    try:
+        data = request.get_json(force=True)
+        text = data.get("text", "").strip()
+        if not text:
+            return jsonify({"error": "Text is empty"}), 400
+    except Exception as e:
+        return jsonify({"error": "Invalid JSON"}), 400
+
+    # ✅ 3. Prepare the entry
+    entry = {
+        "text": text,
+        "createdAt": datetime.utcnow()
+    }
+
+    # ✅ 4. Push into the `texts` array of the user doc
+    result = users_collection.update_one(
+        {"uid": uid},
+        {"$push": {"texts": entry}},
+        upsert=True
+    )
+
+    # ✅ 5. Return success message
+    return jsonify({
+        "message": "Text saved successfully",
+        "modifiedCount": result.modified_count
+    }), 200
 
 @app.route("/extract-text", methods=["POST"])
 def extract_text_endpoint():

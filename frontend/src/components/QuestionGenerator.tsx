@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { generateQuestions } from "../api"; // Updated API function
 import ShowQandA from "../components/ShowQandA";
+import SaveText from "./SaveText";
 
 type Option = { label: string; text: string };
 type MCQ = { question: string; options: Option[]; answer: string };
@@ -18,6 +19,7 @@ const QuestionGenerator = () => {
   const [narrativeQuestions, setNarrativeQuestions] = useState<Narrative[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [toSave, setToSave] = useState<string>("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -37,6 +39,7 @@ const QuestionGenerator = () => {
     setMcqs([]);
     setNarrativeQuestions([]);
     setError(null);
+    setToSave("");
 
     try {
       const data = await generateQuestions({
@@ -53,6 +56,7 @@ const QuestionGenerator = () => {
       } else {
         setNarrativeQuestions(data);
       }
+      setToSave(data);
     } catch (error) {
       console.error("Error generating questions", error);
       setError("Failed to generate questions.");
@@ -135,6 +139,9 @@ const QuestionGenerator = () => {
       {error && <div className="alert alert-danger mt-3">{error}</div>}
 
       <ShowQandA questionType={questionType} mcqs={mcqs} narrativeQuestions={narrativeQuestions} />
+      {/* only render SaveText once, passing the serialized Q&A */}
+      {toSave && <SaveText textToSave={toSave} onSaved={() => setToSave("")} />}
+
     </div>
   );
 };

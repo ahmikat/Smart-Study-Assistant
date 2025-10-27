@@ -6,23 +6,25 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-// Create Context with default values
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// ThemeProvider component to wrap the app
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   // Load the theme from localStorage or default to false (light mode)
   const storedTheme = localStorage.getItem("theme");
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(
-    storedTheme ? JSON.parse(storedTheme) : false
-  );
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (!storedTheme) return false;
+    try {
+      return JSON.parse(storedTheme);
+    } catch {
+      // Handle legacy string values like "light" or "dark"
+      return storedTheme === "dark";
+    }
+  });
 
-  // Toggle the theme
   const toggleTheme = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
 
-    // Save the new theme in localStorage
     localStorage.setItem("theme", JSON.stringify(newMode));
   };
 

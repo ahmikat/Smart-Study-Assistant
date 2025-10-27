@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
 
-const API_URL = "https://web-production-5136.up.railway.app";
-//const API_URL = "http://127.0.0.1:5000";
+//const API_URL = "https://web-production-5136.up.railway.app";
+const API_URL = "http://127.0.0.1:5000";
 
 const EssayGenerator: React.FC = () => {
   const [topic, setTopic] = useState<string>("");

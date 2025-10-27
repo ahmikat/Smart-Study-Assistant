@@ -59,8 +59,8 @@ const Sidebar: React.FC = () => {
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link fw-medium" href="#" onClick={(e) => { e.preventDefault(); handleNavigate('/pricing'); }}>
-                Pricing
+              <a className="nav-link fw-medium" href="#" onClick={(e) => { e.preventDefault(); handleNavigate('/profile'); }}>
+                Profile
               </a>
             </li>
              <li className="nav-item">
