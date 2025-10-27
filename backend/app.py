@@ -2,6 +2,8 @@ import re
 import os
 import io
 import tempfile
+import json
+from firebase_admin import credentials, initialize_app
 from flask import Flask, request, jsonify, send_file, send_from_directory
 import fitz 
 import firebase_admin
@@ -40,8 +42,11 @@ client = MongoClient(mongo_uri)
 db = client["studyhelper"]
 users_collection = db["users"]
 
-cred = credentials.Certificate("firebase-service-account.json")
-firebase_admin.initialize_app(cred)
+
+firebase_config = json.loads(os.environ.get("FIREBASE_CONFIG"))
+cred = credentials.Certificate(firebase_config)
+initialize_app(cred)
+# firebase_admin.initialize_app(cred)
 
 def extractText(pdf_path):
     """Extract full text from a given PDF file."""

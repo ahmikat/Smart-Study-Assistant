@@ -27,7 +27,7 @@ const SaveText: React.FC<SaveTextProps> = ({ textToSave, onSaved }) => {
     try {
       const token = await user.getIdToken(); // ✅ get the Firebase ID token
       await axios.post(
-      "http://127.0.0.1:5000/api/user/texts",
+      "https://web-production-20c20.up.railway.app/api/user/texts",
       {
         text: typeof textToSave === "string"
           ? textToSave

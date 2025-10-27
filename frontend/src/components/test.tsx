@@ -16,7 +16,7 @@ const Test: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/submit', formData, {
+      const response = await axios.post('https://web-production-20c20.up.railway.app/submit', formData, {
         headers: {
           'Content-Type': 'application/json',
         },

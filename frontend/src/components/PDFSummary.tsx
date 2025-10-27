@@ -3,8 +3,8 @@ import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import './PDFSummary.css';  
 
-//const API_URL = "https://web-production-5136.up.railway.app";
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = "https://web-production-20c20.up.railway.app";
+//const API_URL = "http://127.0.0.1:5000";
 
 const PDFSummary: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
