@@ -25,7 +25,7 @@ const Profile: React.FC = () => {
 
       const token = await currentUser.getIdToken();
       try {
-        const res = await axios.get("http://127.0.0.1:5000/api/user", {
+        const res = await axios.get("https://web-production-20c20.up.railway.app/api/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -67,7 +67,7 @@ const Profile: React.FC = () => {
 
     try {
       await axios.post(
-        "http://127.0.0.1:5000/api/user",
+        "https://web-production-20c20.up.railway.app/api/user",
         { name, university },
         {
           headers: {
@@ -83,7 +83,7 @@ const Profile: React.FC = () => {
     }
   };
 
-  const renderEntry = (entry: TextEntry, index: number) => {
+  const renderEntry = (entry: TextEntry) => {
     let parsed: any;
     try {
       parsed = JSON.parse(entry.text);
@@ -206,7 +206,7 @@ const Profile: React.FC = () => {
                   <strong className="text-muted d-block mb-2">
                     Saved on {new Date(entry.createdAt).toLocaleString()}
                   </strong>
-                  {renderEntry(entry, idx)}
+                  {renderEntry(entry)}
                 </div>
               ))
             ) : (
